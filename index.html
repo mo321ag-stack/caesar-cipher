@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Caesar Cipher Lab</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="brand">🔐 <span data-i18n="title"></span></div>
+  <nav id="nav" aria-label="Main"></nav>
+  <button id="lang" type="button"></button>
+</header>
+
+<main>
+<!-- 1. HOME / OVERVIEW + EDUCATIONAL SECTION -->
+<section id="home" class="tab active">
+  <div class="hero">
+    <h1 data-i18n="hero_t"></h1>
+    <p data-i18n="hero_p"></p>
+    <button class="primary" data-go="encrypt" data-i18n="start"></button>
+    <button data-go="learn" data-i18n="n_learn"></button>
+  </div>
+  <div class="grid">
+    <article class="card"><h3 data-i18n="h_def_t"></h3><p data-i18n="h_def"></p></article>
+    <article class="card"><h3 data-i18n="h_hist_t"></h3><p data-i18n="h_hist"></p></article>
+    <article class="card"><h3 data-i18n="h_ex_t"></h3><p data-i18n-html="h_ex"></p></article>
+    <article class="card"><h3 data-i18n="h_chr_t"></h3><p data-i18n="h_chr"></p></article>
+    <article class="card wide">
+      <h3 data-i18n="h_work_t"></h3>
+      <p data-i18n="h_work"></p>
+      <div class="tw"><table class="tbl" id="workedTbl"></table></div>
+      <p>→ <code class="res">HELLO → KHOOR</code></p>
+    </article>
+    <article class="card"><h3 data-i18n="h_bf_t"></h3><p data-i18n="h_bf"></p></article>
+    <article class="card"><h3 data-i18n="h_pc_t"></h3><p data-i18n-html="h_pro"></p><p data-i18n-html="h_con"></p></article>
+    <article class="card wide"><h3 data-i18n="h_sec_t"></h3><p data-i18n="h_sec"></p></article>
+    <article class="card wide">
+      <button id="stBtn" data-i18n="stBtn"></button>
+      <div id="stOut"></div>
+    </article>
+  </div>
+</section>
+
+<!-- 2 & 3. ENCRYPT / DECRYPT (filled from #cipherTpl by script.js) -->
+<section id="encrypt" class="tab"><h2 data-i18n="n_enc"></h2></section>
+<section id="decrypt" class="tab"><h2 data-i18n="n_dec"></h2></section>
+
+<!-- 4. BRUTE FORCE -->
+<section id="brute" class="tab">
+  <h2 data-i18n="n_brute"></h2>
+  <div class="card">
+    <label for="bfIn" data-i18n="bfIn"></label>
+    <textarea id="bfIn" rows="3" data-i18n-ph="ph"></textarea>
+    <div class="row">
+      <button id="bfGo" class="primary" data-i18n="bfGo"></button>
+      <button data-sample="bfIn" data-i18n="sample"></button>
+    </div>
+    <p class="hint" data-i18n="bfNote"></p>
+    <p id="bfMsg" class="msg"></p>
+  </div>
+  <div class="card"><div class="tw tall"><table id="bfOut" class="tbl"></table></div></div>
+</section>
+
+<!-- 5. FREQUENCY ANALYSIS -->
+<section id="freq" class="tab">
+  <h2 data-i18n="n_freq"></h2>
+  <div class="card">
+    <label for="frIn" data-i18n="frIn"></label>
+    <textarea id="frIn" rows="3" data-i18n-ph="ph"></textarea>
+    <div class="row"><button data-sample="frIn" data-i18n="sample"></button></div>
+  </div>
+  <div class="card">
+    <div class="chart" id="frChart" role="img"></div>
+    <p id="frInfo" class="msg ok"></p>
+  </div>
+  <div class="card"><h3 data-i18n="frWhy_t"></h3><p data-i18n="frWhy"></p></div>
+</section>
+
+<!-- 6. LEARN STEP BY STEP -->
+<section id="learn" class="tab">
+  <h2 data-i18n="n_learn"></h2>
+  <div class="card">
+    <h3 data-i18n="lrnF"></h3>
+    <div class="grid">
+      <div><b data-i18n="doEnc"></b><div class="formula">C = (P + K) mod 26</div></div>
+      <div><b data-i18n="doDec"></b><div class="formula">P = (C − K + 26) mod 26</div></div>
+    </div>
+    <p class="hint" data-i18n="lrnWhere"></p>
+  </div>
+  <div class="card">
+    <div class="grid">
+      <div><label for="lMode" data-i18n="lrnMode"></label>
+        <select id="lMode"><option value="enc" data-i18n="doEnc"></option><option value="dec" data-i18n="doDec"></option></select></div>
+      <div><label for="lKey" data-i18n="key"></label><input id="lKey" type="number" min="0" max="25" value="3"></div>
+    </div>
+    <label for="lIn" data-i18n="frIn"></label>
+    <textarea id="lIn" rows="2" data-i18n-ph="ph">HELLO</textarea>
+  </div>
+  <div class="card" id="lOut"></div>
+</section>
+
+<!-- 7. QUIZ -->
+<section id="quiz" class="tab">
+  <h2 data-i18n="n_quiz"></h2>
+  <div class="row"><b id="quizScore"></b><button id="qRestart" data-i18n="qRestart"></button></div>
+  <div id="quizBox"></div>
+</section>
+</main>
+
+<div id="toast" role="status"></div>
+
+<!-- Shared template for the Encrypt and Decrypt panels -->
+<template id="cipherTpl">
+  <div class="grid">
+    <div class="card">
+      <label class="lIn"></label>
+      <textarea rows="4" data-i18n-ph="ph"></textarea>
+      <div class="row">
+        <label data-i18n="key"></label>
+        <input class="kn" type="number" min="0" max="25" value="3" aria-label="key">
+        <input class="ks" type="range" min="0" max="25" value="3" aria-label="key slider">
+      </div>
+      <p class="hint" data-i18n="note"></p>
+      <p class="err" aria-live="polite"></p>
+      <div class="row">
+        <button class="go primary"></button>
+        <button class="rs" data-i18n="reset"></button>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="lOut"></h3>
+      <div class="out" dir="auto" aria-live="polite"></div>
+      <div class="row"><button class="cp" data-i18n="copy"></button></div>
+    </div>
+  </div>
+  <div class="card"><h3 data-i18n="viz"></h3><div class="viz"></div></div>
+  <div class="card">
+    <h3 data-i18n="tbl"></h3>
+    <p class="hint">↻ = <span data-i18n="wrap"></span></p>
+    <div class="tw"><table class="tbl"></table></div>
+  </div>
+</template>
+
+<script src="script.js"></script>
+</body>
+</html>
